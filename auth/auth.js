@@ -1,6 +1,11 @@
 const passport = require("passport");
+const jwt = require('jsonwebtoken')
 const localStrategy = require("passport-local").Strategy;
+const JwtStraegy = require('passport-jwt').Strategy
+const ExtractJWT = require('passport-jwt').ExtractJwt;
 const User = require("../model/user");
+const dotenv = require('dotenv')
+dotenv.config()
 
 passport.use(
 	"login",
@@ -10,19 +15,22 @@ passport.use(
 			passwordField: "password",
 		},
 		async function (email, password, done) {
-			console.log(email);
+			console.log(email,'hello');
 
 			const user = await User.findOne({ email });
+            console.log(user);
 			try {
 				if (!user) {
-					console.log(user);
+				
 					done(null, false);
 				}
 
 				if (user) {
 					const isVali = await user.comparePassword(password);
 					if (isVali) {
-						done(null, user);
+                        const payload ={_id:user.__id,email:user.email}
+                     const token =  jwt.sign(payload,process.env.SECRET_KEY)
+						done(null, token);
 					} else {
 						done(null, false);
 					}
@@ -34,3 +42,16 @@ passport.use(
 		}
 	)
 );
+
+passport.use(new JwtStraegy({
+    secretOrKey: process.env.SECRET_KEY,
+    jwtFromRequest:ExtractJWT.fromAuthHeaderAsBearerToken('secret_token')
+},function(payload,done){
+
+    if(!payload){
+        return done(null,fale)
+    }else{
+        done(null,payload)
+    }
+
+}))

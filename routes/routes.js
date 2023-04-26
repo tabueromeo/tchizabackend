@@ -11,7 +11,7 @@ routes.get(
 		console.log(req.user);
 		res.status(200).json({
 			message: "authentification reussi",
-			user: req.user,
+			token: req.user,
 		});
 	}
 );

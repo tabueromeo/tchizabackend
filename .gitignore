@@ -11,7 +11,7 @@ bin-release/
 /node_modules
 # Executables
 *.swf
-*.air
+*.airnpm
 *.ipa
 *.apk
 
